@@ -1,4 +1,7 @@
 
 
 # Added by Homey CLI
-/.homeybuild/
+/.homeybuild/node_modules/
+.homeybuild/
+package-lock.json
+*.svg
