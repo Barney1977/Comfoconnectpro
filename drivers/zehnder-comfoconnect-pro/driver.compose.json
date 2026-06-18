@@ -110,9 +110,10 @@
     }
   ],
   "capabilities": [
-    "ventilation_preset",
     "away_mode",
     "boost_active",
+    "auto_mode",
+    "ventilation_preset",
     "temperature_profile",
     "target_temperature",
     "measure_temperature.indoor",
@@ -121,10 +122,6 @@
     "measure_temperature.exhaust",
     "measure_humidity.indoor",
     "measure_humidity.outdoor",
-    "filter_days_remaining",
-    "filter_replace_alarm",
-    "alarm_generic",
-    "connection_status",
     "measure_power",
     "meter_power",
     "meter_power.year",
@@ -135,6 +132,10 @@
     "measure_rotation.exhaust",
     "measure_humidity.duty_supply",
     "measure_humidity.bypass",
+    "filter_days_remaining",
+    "filter_replace_alarm",
+    "alarm_generic",
+    "connection_status",
     "energy_session_status"
   ],
   "capabilitiesOptions": {
@@ -206,8 +207,8 @@
     },
     "away_mode": {
       "title": {
-        "en": "Away mode",
-        "nl": "Afwezigheidsmodus"
+        "en": "Away",
+        "nl": "Afwezig"
       }
     },
     "boost_active": {
@@ -328,6 +329,12 @@
       "min": 10,
       "max": 35,
       "step": 0.5
+    },
+    "auto_mode": {
+      "title": {
+        "en": "Auto",
+        "nl": "Auto"
+      }
     }
   },
   "images": {

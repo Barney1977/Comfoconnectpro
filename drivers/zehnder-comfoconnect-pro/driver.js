@@ -53,6 +53,11 @@ module.exports = class ZehnderComfoConnectProDriver extends Homey.Driver {
         await device.setTemperatureProfileMode(Number(mode));
       });
 
+    this.homey.flow.getActionCard('set_auto_mode')
+      .registerRunListener(async ({ device, enabled }) => {
+        await device.setAutoMode(enabled === 'true');
+      });
+
     this.homey.flow.getActionCard('set_comfoclime')
       .registerRunListener(async ({ device, enabled }) => {
         await device.setComfoClime(enabled === 'true');
@@ -93,6 +98,11 @@ module.exports = class ZehnderComfoConnectProDriver extends Homey.Driver {
     this.homey.flow.getConditionCard('unit_alarm_active')
       .registerRunListener(async ({ device }) => {
         return device.getCapabilityValue('alarm_generic') === true;
+      });
+
+    this.homey.flow.getConditionCard('is_auto_mode')
+      .registerRunListener(async ({ device }) => {
+        return device.getCapabilityValue('auto_mode') === true;
       });
   }
 

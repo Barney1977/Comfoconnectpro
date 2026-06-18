@@ -31,6 +31,7 @@ const REG_COIL_ERROR_RESET   = 0x0000;
 const REG_COIL_PRESET_AWAY   = 0x0001;
 const REG_COIL_PRESET_1      = 0x0002;
 const REG_COIL_PARTY_TIMER   = 0x0006;
+const REG_COIL_AUTO_MODE    = 0x0005;
 const REG_COIL_COMFOCLIME    = 0x0008;
 
 // Holding Registers (R/W numeric)
@@ -101,6 +102,9 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
     });
     this.registerCapabilityListener('temperature_profile', async (v) => {
       await this.setTemperatureProfile(Number(v));
+    });
+    this.registerCapabilityListener('auto_mode', async (v) => {
+      await this.setAutoMode(v);
     });
     this.registerCapabilityListener('target_temperature', async (v) => {
       await this.setExternalSetpoint(v);
@@ -443,6 +447,13 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
     this._requireModbus();
     await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_COMFOCLIME, enabled), 'setComfoClime');
     this.log(`ComfoClime set to ${enabled}`);
+  }
+
+  async setAutoMode(enabled) {
+    this._requireModbus();
+    await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_AUTO_MODE, enabled), 'setAutoMode');
+    await this._setCapSafe('auto_mode', enabled);
+    this.log('Auto mode set to', enabled);
   }
 
   async resetErrors() {
