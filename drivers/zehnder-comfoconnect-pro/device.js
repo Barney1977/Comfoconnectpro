@@ -13,32 +13,32 @@ const CONNECT_TIMEOUT_MS = 8 * 1000;
 // All addresses 0-based (protocol address = datasheet address − 1)
 //
 // Discrete Inputs (read-only bool)
-const REG_DI_ERROR_FLAG     = 0x0000; // Fehlerprotokoll
-const REG_DI_FILTER_REPLACE = 0x0003; // Filter tauschen
+const REG_DI_ERROR_FLAG     = 0x0001; // Fehlerprotokoll
+const REG_DI_FILTER_REPLACE = 0x0004; // Filter tauschen
 
 // Input Registers (read-only numeric)
-const REG_IR_CONNECTION_STATUS = 0x0000; // Verbindungsstatus
-const REG_IR_ROOM_TEMP         = 0x0007; // Raumtemperatur °C*10
-const REG_IR_EXHAUST_TEMP      = 0x0008; // SENSOR_ETA °C*10
-const REG_IR_OUTDOOR_TEMP      = 0x000A; // SENSOR_ODA °C*10
-const REG_IR_SUPPLY_TEMP       = 0x000B; // SENSOR_SUP °C*10
-const REG_IR_ROOM_HUMIDITY     = 0x000C; // Raumfeuchte %
-const REG_IR_OUTDOOR_HUMIDITY  = 0x000F; // HUMID_ODA %
-const REG_IR_FILTER_STATUS     = 0x0019; // Filterstatus days
+const REG_IR_CONNECTION_STATUS = 0x0001; // Verbindungsstatus
+const REG_IR_ROOM_TEMP         = 0x0008; // Raumtemperatur °C*10
+const REG_IR_EXHAUST_TEMP      = 0x0009; // SENSOR_ETA °C*10
+const REG_IR_OUTDOOR_TEMP      = 0x000B; // SENSOR_ODA °C*10
+const REG_IR_SUPPLY_TEMP       = 0x000C; // SENSOR_SUP °C*10
+const REG_IR_ROOM_HUMIDITY     = 0x000D; // Raumfeuchte %
+const REG_IR_OUTDOOR_HUMIDITY  = 0x0010; // HUMID_ODA %
+const REG_IR_FILTER_STATUS     = 0x001A; // Filterstatus days
 
 // Coils (R/W bool)
-const REG_COIL_ERROR_RESET   = 0x0000;
-const REG_COIL_PRESET_AWAY   = 0x0001;
-const REG_COIL_PRESET_1      = 0x0002;
-const REG_COIL_PARTY_TIMER   = 0x0006;
-const REG_COIL_COMFOCLIME    = 0x0008;
+const REG_COIL_ERROR_RESET   = 0x0001;
+const REG_COIL_PRESET_AWAY   = 0x0002;
+const REG_COIL_PRESET_1      = 0x0003;
+const REG_COIL_PARTY_TIMER   = 0x0007;
+const REG_COIL_COMFOCLIME    = 0x0009;
 
 // Holding Registers (R/W numeric)
-const REG_HR_VENTILATION_PRESET  = 0x0000; // Lüftungsvoreinstellung 0-3
-const REG_HR_TEMPERATURE_PROFILE = 0x0001; // Temperatur Profil 0-2
-const REG_HR_TEMP_PROFILE_MODE   = 0x0002; // Temperatur Profil Modus 0-2
-const REG_HR_EXTERNAL_SETPOINT   = 0x0003; // Externer Sollwert °C*10 (ushort)
-const REG_HR_PARTY_TIMER_SECONDS = 0x0004; // Party timer in Sekunden
+const REG_HR_VENTILATION_PRESET  = 0x0001; // Lüftungsvoreinstellung 0-3
+const REG_HR_TEMPERATURE_PROFILE = 0x0002; // Temperatur Profil 0-2
+const REG_HR_TEMP_PROFILE_MODE   = 0x0003; // Temperatur Profil Modus 0-2
+const REG_HR_EXTERNAL_SETPOINT   = 0x0004; // Externer Sollwert °C*10 (ushort)
+const REG_HR_PARTY_TIMER_SECONDS = 0x0005; // Party timer in Sekunden
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function toSigned16(v)      { return v > 32767 ? v - 65536 : v; }
@@ -280,7 +280,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       if (this._lastAlarmGeneric !== null) this._lastAlarmGeneric = errorFlag;
       else                                 this._lastAlarmGeneric = errorFlag;
 
-    } catch (err) { this.log('pollDI err:', err.message); }
+    } catch (err) { this.log('pollDI err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
   }
 
   async _pollInputRegisters() {
@@ -297,12 +297,12 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       if (isPlausibleTemp(et)) await this._setCapSafe('measure_temperature.exhaust', et);
       if (isPlausibleHum(rh))  await this._setCapSafe('measure_humidity.indoor',     rh);
       if (isPlausibleHum(oh))  await this._setCapSafe('measure_humidity.outdoor',    oh);
-    } catch (err) { this.log('pollIR err:', err.message); }
+    } catch (err) { this.log('pollIR err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
     try {
       const r2   = await this._client.readInputRegisters(REG_IR_FILTER_STATUS, 1);
       const days = r2.response._body.valuesAsArray[0];
       if (days >= 0 && days <= 365) await this._setCapSafe('filter_days_remaining', days);
-    } catch (err) { this.log('pollFilter err:', err.message); }
+    } catch (err) { this.log('pollFilter err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
   }
 
   async _pollHoldingRegisters() {
@@ -337,14 +337,14 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
         await this._setCapSafe('target_temperature', extSetpoint);
       }
 
-    } catch (err) { this.log('pollHR err:', err.message); }
+    } catch (err) { this.log('pollHR err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
   }
 
   async _pollCoils() {
     try {
       const res = await this._client.readCoils(REG_COIL_ERROR_RESET, 9);
       await this._setCapSafe('boost_active', res.response._body.valuesAsArray[6] === 1);
-    } catch (err) { this.log('pollCoils err:', err.message); }
+    } catch (err) { this.log('pollCoils err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
   }
 
   // ── Write commands ────────────────────────────────────────────────────────
