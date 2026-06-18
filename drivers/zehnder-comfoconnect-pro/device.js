@@ -64,7 +64,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
 
     // ── Modbus TCP ────────────────────────────────────────────────────────────
     this._socket = new net.Socket();
-    this._client = new Modbus.client.TCP(this._socket, this._settings.unit_id || 1);
+    this._client = new Modbus.client.TCP(this._socket, this._settings.unit_id || 1, 15000);
     this._socket.setKeepAlive(true);
     this._socket.setMaxListeners(20);
 
@@ -407,7 +407,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   async setVentilationPreset(preset) {
     this._requireModbus();
     if (preset < 0 || preset > 3) throw new Error('Preset must be 0–3');
-    await this._client.writeSingleRegister(REG_HR_VENTILATION_PRESET, preset);
+    await this._writeWithRetry(() => this._client.writeSingleRegister(REG_HR_VENTILATION_PRESET, preset), 'setVentilationPreset');
     await this._setCapSafe('ventilation_preset', String(preset));
     await this._setCapSafe('away_mode', preset === 0);
   }
@@ -415,10 +415,10 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   async setAwayMode(enabled) {
     this._requireModbus();
     if (enabled) {
-      await this._client.writeSingleCoil(REG_COIL_PRESET_AWAY, true);
+      await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_PRESET_AWAY, true), 'setAwayMode');
     } else {
       if (this.getCapabilityValue('ventilation_preset') === '0')
-        await this._client.writeSingleCoil(REG_COIL_PRESET_1, true);
+        await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_PRESET_1, true), 'setAwayMode off');
     }
     await this._setCapSafe('away_mode', enabled);
   }
@@ -426,10 +426,10 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   async setBoost(active, durationSeconds = 3600) {
     this._requireModbus();
     if (active) {
-      await this._client.writeSingleRegister(REG_HR_PARTY_TIMER_SECONDS, Math.min(durationSeconds, 65535));
-      await this._client.writeSingleCoil(REG_COIL_PARTY_TIMER, true);
+      await this._writeWithRetry(() => this._client.writeSingleRegister(REG_HR_PARTY_TIMER_SECONDS, Math.min(durationSeconds, 65535)), 'setBoost timer');
+      await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_PARTY_TIMER, true), 'setBoost on');
     } else {
-      await this._client.writeSingleCoil(REG_COIL_PARTY_TIMER, false);
+      await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_PARTY_TIMER, false), 'setBoost off');
     }
     await this._setCapSafe('boost_active', active);
   }
@@ -437,7 +437,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   async setTemperatureProfile(profile) {
     this._requireModbus();
     if (profile < 0 || profile > 2) throw new Error('Profile must be 0–2');
-    await this._client.writeSingleRegister(REG_HR_TEMPERATURE_PROFILE, profile);
+    await this._writeWithRetry(() => this._client.writeSingleRegister(REG_HR_TEMPERATURE_PROFILE, profile), 'setTemperatureProfile');
     await this._setCapSafe('temperature_profile', String(profile));
   }
 
@@ -467,7 +467,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   async setTemperatureProfileMode(mode) {
     this._requireModbus();
     if (mode < 0 || mode > 2) throw new Error('Mode must be 0–2');
-    await this._client.writeSingleRegister(REG_HR_TEMP_PROFILE_MODE, mode);
+    await this._writeWithRetry(() => this._client.writeSingleRegister(REG_HR_TEMP_PROFILE_MODE, mode), 'setTemperatureProfileMode');
     this.log(`Temperature profile mode set to ${mode}`);
   }
 
@@ -478,13 +478,28 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
    */
   async setComfoClime(enabled) {
     this._requireModbus();
-    await this._client.writeSingleCoil(REG_COIL_COMFOCLIME, enabled);
+    await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_COMFOCLIME, enabled), 'setComfoClime');
     this.log(`ComfoClime set to ${enabled}`);
   }
 
   async resetErrors() {
     this._requireModbus();
-    await this._client.writeSingleCoil(REG_COIL_ERROR_RESET, true);
+    await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_ERROR_RESET, true), 'resetErrors');
+  }
+
+
+  // ── Write with retry ─────────────────────────────────────────────────────
+  async _writeWithRetry(fn, label) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (err.message && err.message.includes('timeout')) {
+        this.log(`${label}: timeout, retrying once after 1s...`);
+        await new Promise(r => setTimeout(r, 1000));
+        return await fn(); // one retry
+      }
+      throw err;
+    }
   }
 
   _requireModbus() {
@@ -537,7 +552,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       this._stopPolling();
       try { await this._modbusDisconnect(); } catch (_) {}
       if (changedKeys.includes('unit_id'))
-        this._client = new Modbus.client.TCP(this._socket, newSettings.unit_id || 1);
+        this._client = new Modbus.client.TCP(this._socket, newSettings.unit_id || 1, 15000);
     }
 
     if (changedKeys.some(k => ['ip', 'port', 'unit_id'].includes(k))) {
