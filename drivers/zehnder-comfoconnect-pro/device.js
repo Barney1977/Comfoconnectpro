@@ -43,7 +43,7 @@ const REG_HR_PARTY_TIMER_SECONDS = 0x0004; // Party timer in Sekunden
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function toSigned16(v)      { return v > 32767 ? v - 65536 : v; }
 function tempFromReg(raw)   { return toSigned16(raw) / 10; }
-function isPlausibleTemp(t) { return t > -50 && t < 80; }
+function isPlausibleTemp(t) { return t !== 0 && t > -50 && t < 80; }
 function isPlausibleHum(h)  { return h >= 0 && h <= 100; }
 
 // ─── Device ──────────────────────────────────────────────────────────────────
@@ -339,18 +339,28 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
     try {
       const res = await this._client.readInputRegisters(REG_IR_CONNECTION_STATUS, 17);
       const raw = res.response._body.valuesAsArray;
-      this.log('IR raw[0..16]:', raw.join(','));
+      // this.log('IR raw[0..16]:', raw.join(',')); // debug
       await this._setCapSafe('connection_status', raw[0] === 0);
       const rt = tempFromReg(raw[7]),  et = tempFromReg(raw[8]);
       const ot = tempFromReg(raw[10]), st = tempFromReg(raw[11]);
       const rh = raw[12], oh = raw[15];
       this.log('IR temps rt=' + rt + ' et=' + et + ' ot=' + ot + ' st=' + st + ' rh=' + rh + ' oh=' + oh);
-      if (isPlausibleTemp(rt)) await this._setCapSafe('measure_temperature.indoor',  rt);
+      // raw[7]=room sensor (external, may be 0 if not installed)
+      // raw[8]=exhaust/ETA (return air from rooms = best indoor temp proxy)
+      // raw[9]=outgoing/EHA (air leaving house)
+      // raw[10]=outdoor/ODA
+      // raw[11]=supply/SUP (air entering rooms after heat exchanger)
+      const indoorTemp = isPlausibleTemp(rt) && rt !== 0 ? rt : et; // fallback to exhaust if no room sensor
+      if (isPlausibleTemp(indoorTemp)) await this._setCapSafe('measure_temperature.indoor',  indoorTemp);
       if (isPlausibleTemp(ot)) await this._setCapSafe('measure_temperature.outdoor', ot);
       if (isPlausibleTemp(st)) await this._setCapSafe('measure_temperature.supply',  st);
       if (isPlausibleTemp(et)) await this._setCapSafe('measure_temperature.exhaust', et);
-      if (isPlausibleHum(rh))  await this._setCapSafe('measure_humidity.indoor',     rh);
-      if (isPlausibleHum(oh))  await this._setCapSafe('measure_humidity.outdoor',    oh);
+      // raw[12]=room humidity (external sensor, may be 0 if not installed)
+      // raw[13]=exhaust humidity (ETA) = best indoor humidity proxy
+      const exhaustHum = raw[13];
+      const indoorHum = isPlausibleHum(rh) && rh !== 0 ? rh : exhaustHum;
+      if (isPlausibleHum(indoorHum)) await this._setCapSafe('measure_humidity.indoor', indoorHum);
+      if (isPlausibleHum(oh))        await this._setCapSafe('measure_humidity.outdoor', oh);
     } catch (err) { this.log('pollIR err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
     try {
       const r2   = await this._client.readInputRegisters(REG_IR_FILTER_STATUS, 1);
@@ -375,7 +385,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       // Read 5 registers: preset, temp profile, temp profile mode, ext setpoint (skip), party timer (skip)
       const res    = await this._client.readHoldingRegisters(REG_HR_VENTILATION_PRESET, 4);
       const values = res.response._body.valuesAsArray;
-      this.log('HR raw[0..3]:', values.join(','));
+      // this.log('HR raw[0..3]:', values.join(',')); // debug
       const preset      = values[0]; // 0-3
       const tempProfile = values[1]; // 0-2
       // values[2] = temp profile mode (0-2) — not exposed as capability
