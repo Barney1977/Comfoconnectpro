@@ -22,17 +22,25 @@ class ZehnderComfoConnectProApp extends Homey.App {
           this.log('WARNING: comfoairq bridge error — triggering reconnect:', err.message);
           this._lastBridgeError = now;
 
-          // Find all devices and trigger energy reconnect
+          // Force-close all energy sessions immediately
           try {
             const driver = this.homey.drivers.getDriver('zehnder-comfoconnect-pro');
             const devices = driver.getDevices();
             devices.forEach(device => {
-              if (device._energyManager) {
+              if (device._energyManager && device._energyManager._sessionActive) {
                 device._energyManager._sessionActive = false;
+                // Force destroy socket immediately — do not await
+                try {
+                  if (device._energyManager._comfo &&
+                      device._energyManager._comfo._bridge &&
+                      device._energyManager._comfo._bridge.sock) {
+                    device._energyManager._comfo._bridge.sock.removeAllListeners();
+                    device._energyManager._comfo._bridge.sock.destroy();
+                  }
+                  device._energyManager._comfo = null;
+                } catch(_) {}
                 device._energyManager._onStatus(false, 'bridge_error');
-                device._energyManager._disconnect().catch(() => {}).then(() => {
-                  device._energyManager._scheduleReconnect('bridge_error');
-                });
+                device._energyManager._scheduleReconnect('bridge_error');
               }
             });
           } catch(e) { /* ignore */ }
