@@ -1,0 +1,8 @@
+{
+  "type": "boolean",
+  "title": { "en": "Auto", "nl": "Auto" },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "toggle",
+  "icon": "/assets/capability-icons/auto.svg"
+}
