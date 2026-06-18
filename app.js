@@ -10,10 +10,13 @@ class ZehnderComfoConnectProApp extends Homey.App {
     this._lastBridgeError = 0;
 
     process.on('uncaughtException', (err) => {
-      const isComfoairqError = err && err.stack && (
-        err.stack.includes('comfoairq') ||
-        err.stack.includes('analysis.js') ||
-        err.stack.includes('bridge.js')
+      const isComfoairqError = err && (
+        (err.code === 'ERR_STREAM_DESTROYED') ||
+        (err.stack && (
+          err.stack.includes('comfoairq') ||
+          err.stack.includes('analysis.js') ||
+          err.stack.includes('bridge.js')
+        ))
       );
       if (isComfoairqError) {
         const now = Date.now();
