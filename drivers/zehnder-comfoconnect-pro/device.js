@@ -13,32 +13,32 @@ const CONNECT_TIMEOUT_MS = 8 * 1000;
 // All addresses 0-based (protocol address = datasheet address − 1)
 //
 // Discrete Inputs (read-only bool)
-const REG_DI_ERROR_FLAG     = 0x0001; // Fehlerprotokoll
-const REG_DI_FILTER_REPLACE = 0x0004; // Filter tauschen
+const REG_DI_ERROR_FLAG     = 0x0000; // Fehlerprotokoll
+const REG_DI_FILTER_REPLACE = 0x0003; // Filter tauschen
 
 // Input Registers (read-only numeric)
-const REG_IR_CONNECTION_STATUS = 0x0001; // Verbindungsstatus
-const REG_IR_ROOM_TEMP         = 0x0008; // Raumtemperatur °C*10
-const REG_IR_EXHAUST_TEMP      = 0x0009; // SENSOR_ETA °C*10
-const REG_IR_OUTDOOR_TEMP      = 0x000B; // SENSOR_ODA °C*10
-const REG_IR_SUPPLY_TEMP       = 0x000C; // SENSOR_SUP °C*10
-const REG_IR_ROOM_HUMIDITY     = 0x000D; // Raumfeuchte %
-const REG_IR_OUTDOOR_HUMIDITY  = 0x0010; // HUMID_ODA %
-const REG_IR_FILTER_STATUS     = 0x001A; // Filterstatus days
+const REG_IR_CONNECTION_STATUS = 0x0000; // Verbindungsstatus
+const REG_IR_ROOM_TEMP         = 0x0007; // Raumtemperatur °C*10
+const REG_IR_EXHAUST_TEMP      = 0x0008; // SENSOR_ETA °C*10
+const REG_IR_OUTDOOR_TEMP      = 0x000A; // SENSOR_ODA °C*10
+const REG_IR_SUPPLY_TEMP       = 0x000B; // SENSOR_SUP °C*10
+const REG_IR_ROOM_HUMIDITY     = 0x000C; // Raumfeuchte %
+const REG_IR_OUTDOOR_HUMIDITY  = 0x000F; // HUMID_ODA %
+const REG_IR_FILTER_STATUS     = 0x0019; // Filterstatus days
 
 // Coils (R/W bool)
-const REG_COIL_ERROR_RESET   = 0x0001;
-const REG_COIL_PRESET_AWAY   = 0x0002;
-const REG_COIL_PRESET_1      = 0x0003;
-const REG_COIL_PARTY_TIMER   = 0x0007;
-const REG_COIL_COMFOCLIME    = 0x0009;
+const REG_COIL_ERROR_RESET   = 0x0000;
+const REG_COIL_PRESET_AWAY   = 0x0001;
+const REG_COIL_PRESET_1      = 0x0002;
+const REG_COIL_PARTY_TIMER   = 0x0006;
+const REG_COIL_COMFOCLIME    = 0x0008;
 
 // Holding Registers (R/W numeric)
-const REG_HR_VENTILATION_PRESET  = 0x0001; // Lüftungsvoreinstellung 0-3
-const REG_HR_TEMPERATURE_PROFILE = 0x0002; // Temperatur Profil 0-2
-const REG_HR_TEMP_PROFILE_MODE   = 0x0003; // Temperatur Profil Modus 0-2
-const REG_HR_EXTERNAL_SETPOINT   = 0x0004; // Externer Sollwert °C*10 (ushort)
-const REG_HR_PARTY_TIMER_SECONDS = 0x0005; // Party timer in Sekunden
+const REG_HR_VENTILATION_PRESET  = 0x0000; // Lüftungsvoreinstellung 0-3
+const REG_HR_TEMPERATURE_PROFILE = 0x0001; // Temperatur Profil 0-2
+const REG_HR_TEMP_PROFILE_MODE   = 0x0002; // Temperatur Profil Modus 0-2
+const REG_HR_EXTERNAL_SETPOINT   = 0x0003; // Externer Sollwert °C*10 (ushort)
+const REG_HR_PARTY_TIMER_SECONDS = 0x0004; // Party timer in Sekunden
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function toSigned16(v)      { return v > 32767 ? v - 65536 : v; }
@@ -310,31 +310,28 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   }
 
   async _pollDiscreteInputs() {
+    // Read discrete inputs individually — device may not support multi-register reads
     try {
-      const res    = await this._client.readDiscreteInputs(REG_DI_ERROR_FLAG, 4);
-      const values = res.response._body.valuesAsArray;
-      const errorFlag   = values[0] === 1;
-      const filterAlarm = values[3] === 1;
-
+      const r1 = await this._client.readDiscreteInputs(REG_DI_ERROR_FLAG, 1);
+      const errorFlag = r1.response._body.valuesAsArray[0] === 1;
       await this._setCapSafe('alarm_generic', errorFlag);
-      await this._setCapSafe('filter_replace_alarm', filterAlarm);
-
-      if (filterAlarm && this._lastFilterAlarm === false) this._triggerDevice('filter_replace_needed');
-      if (errorFlag   && this._lastAlarmGeneric === false) this._triggerDevice('alarm_turned_on');
-      if (!errorFlag  && this._lastAlarmGeneric === true)  this._triggerDevice('alarm_turned_off');
-      this._lastFilterAlarm  = filterAlarm;
+      if (errorFlag  && this._lastAlarmGeneric === false) this._triggerDevice('alarm_turned_on');
+      if (!errorFlag && this._lastAlarmGeneric === true)  this._triggerDevice('alarm_turned_off');
       this._lastAlarmGeneric = errorFlag;
-      this._diSupported = true;
-
     } catch (err) {
       const code = err.response && err.response.body && err.response.body.code;
-      // FC2 not supported (code 1) → log once and skip permanently
-      if (code === 1 && this._diSupported !== false) {
-        this.log('pollDI: FC2 (readDiscreteInputs) not supported by device — disabling');
-        this._diSupported = false;
-      } else if (this._diSupported !== false) {
-        this.log('pollDI err:', err.message, 'exception code:', code);
-      }
+      this.log('pollDI alarm err:', err.message, 'code:', code);
+    }
+
+    try {
+      const r2 = await this._client.readDiscreteInputs(REG_DI_FILTER_REPLACE, 1);
+      const filterAlarm = r2.response._body.valuesAsArray[0] === 1;
+      await this._setCapSafe('filter_replace_alarm', filterAlarm);
+      if (filterAlarm && this._lastFilterAlarm === false) this._triggerDevice('filter_replace_needed');
+      this._lastFilterAlarm = filterAlarm;
+    } catch (err) {
+      const code = err.response && err.response.body && err.response.body.code;
+      this.log('pollDI filter err:', err.message, 'code:', code);
     }
   }
 
@@ -342,10 +339,12 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
     try {
       const res = await this._client.readInputRegisters(REG_IR_CONNECTION_STATUS, 17);
       const raw = res.response._body.valuesAsArray;
+      this.log('IR raw[0..16]:', raw.join(','));
       await this._setCapSafe('connection_status', raw[0] === 0);
       const rt = tempFromReg(raw[7]),  et = tempFromReg(raw[8]);
       const ot = tempFromReg(raw[10]), st = tempFromReg(raw[11]);
       const rh = raw[12], oh = raw[15];
+      this.log('IR temps rt=' + rt + ' et=' + et + ' ot=' + ot + ' st=' + st + ' rh=' + rh + ' oh=' + oh);
       if (isPlausibleTemp(rt)) await this._setCapSafe('measure_temperature.indoor',  rt);
       if (isPlausibleTemp(ot)) await this._setCapSafe('measure_temperature.outdoor', ot);
       if (isPlausibleTemp(st)) await this._setCapSafe('measure_temperature.supply',  st);
@@ -356,8 +355,19 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
     try {
       const r2   = await this._client.readInputRegisters(REG_IR_FILTER_STATUS, 1);
       const days = r2.response._body.valuesAsArray[0];
-      if (days >= 0 && days <= 365) await this._setCapSafe('filter_days_remaining', days);
-    } catch (err) { this.log('pollFilter err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
+      if (days >= 0 && days <= 730) await this._setCapSafe('filter_days_remaining', days);
+    } catch (err) {
+      const code = err.response && err.response.body && err.response.body.code;
+      if (code === 2) {
+        // Address 0x0019 not valid — filter status register may not exist on this firmware
+        if (!this._filterStatusWarned) {
+          this.log('pollFilter: register 0x0019 not available on this device (exception 2) — skipping');
+          this._filterStatusWarned = true;
+        }
+      } else {
+        this.log('pollFilter err:', err.message, 'code:', code);
+      }
+    }
   }
 
   async _pollHoldingRegisters() {
@@ -365,6 +375,7 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       // Read 5 registers: preset, temp profile, temp profile mode, ext setpoint (skip), party timer (skip)
       const res    = await this._client.readHoldingRegisters(REG_HR_VENTILATION_PRESET, 4);
       const values = res.response._body.valuesAsArray;
+      this.log('HR raw[0..3]:', values.join(','));
       const preset      = values[0]; // 0-3
       const tempProfile = values[1]; // 0-2
       // values[2] = temp profile mode (0-2) — not exposed as capability
