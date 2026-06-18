@@ -75,10 +75,6 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       this.log('Modbus TCP connected');
       this.setAvailable().catch(() => {});
       this._setCapSafe('connection_status', true);
-      if (!this._diagnosticsRun) {
-        this._diagnosticsRun = true;
-        this._runModbusDiagnostics().catch(err => this.log('Diagnostics error:', err.message));
-      }
       this._startPolling();
     });
     this._socket.on('end',     () => this.log('Modbus socket ended'));
@@ -237,57 +233,6 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   // ── Polling ───────────────────────────────────────────────────────────────
 
 
-  // ── One-time Modbus diagnostics ──────────────────────────────────────────
-  async _runModbusDiagnostics() {
-    this.log('Modbus diagnostics: testing function codes...');
-
-    // Test FC4: Read Input Registers (most important - temperatures/humidity)
-    try {
-      const r = await this._client.readInputRegisters(0x0001, 1);
-      this.log('FC4 readInputRegisters(0x0000): OK, value =', r.response._body.valuesAsArray[0]);
-    } catch(e) {
-      const code = e.response && e.response.body && e.response.body.code;
-      this.log('FC4 readInputRegisters(0x0000): FAILED, exception code:', code, e.message);
-      // Try address 0x0001
-      try {
-        // address confirmed 1-based, no fallback needed
-        this.log('FC4 readInputRegisters(0x0001): OK → device uses 1-based addressing!');
-        this._modbusAddressOffset = 1;
-      } catch(e2) {
-        this.log('FC4 readInputRegisters(0x0001): also FAILED');
-      }
-    }
-
-    // Test FC3: Read Holding Registers
-    try {
-      const r = await this._client.readHoldingRegisters(0x0001, 1);
-      this.log('FC3 readHoldingRegisters(0x0000): OK, value =', r.response._body.valuesAsArray[0]);
-    } catch(e) {
-      const code = e.response && e.response.body && e.response.body.code;
-      this.log('FC3 readHoldingRegisters(0x0000): FAILED, exception code:', code);
-    }
-
-    // Test FC2: Read Discrete Inputs
-    try {
-      const r = await this._client.readDiscreteInputs(0x0001, 1);
-      this.log('FC2 readDiscreteInputs(0x0000): OK');
-    } catch(e) {
-      const code = e.response && e.response.body && e.response.body.code;
-      this.log('FC2 readDiscreteInputs(0x0000): FAILED, exception code:', code);
-    }
-
-    // Test FC1: Read Coils
-    try {
-      const r = await this._client.readCoils(0x0001, 1);
-      this.log('FC1 readCoils(0x0000): OK');
-    } catch(e) {
-      const code = e.response && e.response.body && e.response.body.code;
-      this.log('FC1 readCoils(0x0000): FAILED, exception code:', code);
-    }
-
-    this.log('Modbus diagnostics complete');
-  }
-
   _startPolling() {
     this._stopPolling();
     const ms = (Number(this._settings.poll_interval) || 30) * 1000;
@@ -339,12 +284,10 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
     try {
       const res = await this._client.readInputRegisters(REG_IR_CONNECTION_STATUS, 17);
       const raw = res.response._body.valuesAsArray;
-      // this.log('IR raw[0..16]:', raw.join(',')); // debug
       await this._setCapSafe('connection_status', raw[0] === 0);
       const rt = tempFromReg(raw[7]),  et = tempFromReg(raw[8]);
       const ot = tempFromReg(raw[10]), st = tempFromReg(raw[11]);
       const rh = raw[12], oh = raw[15];
-      this.log('IR temps rt=' + rt + ' et=' + et + ' ot=' + ot + ' st=' + st + ' rh=' + rh + ' oh=' + oh);
       // raw[7]=room sensor (external, may be 0 if not installed)
       // raw[8]=exhaust/ETA (return air from rooms = best indoor temp proxy)
       // raw[9]=outgoing/EHA (air leaving house)
@@ -385,7 +328,6 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       // Read 5 registers: preset, temp profile, temp profile mode, ext setpoint (skip), party timer (skip)
       const res    = await this._client.readHoldingRegisters(REG_HR_VENTILATION_PRESET, 4);
       const values = res.response._body.valuesAsArray;
-      // this.log('HR raw[0..3]:', values.join(',')); // debug
       const preset      = values[0]; // 0-3
       const tempProfile = values[1]; // 0-2
       // values[2] = temp profile mode (0-2) — not exposed as capability
