@@ -1,0 +1,15 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Filter days remaining",
+    "nl": "Filterdagen resterend"
+  },
+  "units": {
+    "en": "days",
+    "nl": "dagen"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capability-icons/filter.svg"
+}

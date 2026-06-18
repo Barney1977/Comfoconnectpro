@@ -1,0 +1,11 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Away mode",
+    "nl": "Afwezigheidsmodus"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "toggle",
+  "icon": "/assets/capability-icons/away.svg"
+}

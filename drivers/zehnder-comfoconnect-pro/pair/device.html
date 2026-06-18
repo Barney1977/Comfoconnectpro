@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+    }
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: -12px;
+      margin-bottom: 16px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    h2 {
+      text-align: center;
+      font-size: 20px;
+      color: #00A3E0;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <h2>Zehnder ComfoConnect Pro</h2>
+  </div>
+
+  <label for="ip" data-i18n="pair.ip_label">IP Address</label>
+  <input type="text" id="ip" name="ip" placeholder="192.168.1.100" autocomplete="off" />
+  <p class="hint" data-i18n="pair.ip_hint">Find the IP address in your router or on the ComfoConnect Pro label</p>
+
+  <label for="port" data-i18n="pair.port_label">Modbus TCP Port</label>
+  <input type="number" id="port" name="port" value="502" min="1" max="65535" />
+
+  <label for="unit_id" data-i18n="pair.unit_id_label">Unit ID</label>
+  <input type="number" id="unit_id" name="unit_id" value="1" min="1" max="247" />
+  <p class="hint" data-i18n="pair.unit_id_hint">Default is 1 for ComfoConnect Pro</p>
+
+  <script>
+    function notifyHomey() {
+      Homey.emit('settingsChanged', {
+        ip:      document.getElementById('ip').value.trim(),
+        port:    parseInt(document.getElementById('port').value) || 502,
+        unit_id: parseInt(document.getElementById('unit_id').value) || 1,
+      });
+    }
+
+    document.getElementById('ip').addEventListener('input', notifyHomey);
+    document.getElementById('port').addEventListener('input', notifyHomey);
+    document.getElementById('unit_id').addEventListener('input', notifyHomey);
+
+    // Pre-fill from existing settings if available
+    Homey.emit('getSettings', null, (err, settings) => {
+      if (!err && settings) {
+        if (settings.ip)      document.getElementById('ip').value = settings.ip;
+        if (settings.port)    document.getElementById('port').value = settings.port;
+        if (settings.unit_id) document.getElementById('unit_id').value = settings.unit_id;
+      }
+    });
+
+    // Signal to Homey the page is ready
+    Homey.ready();
+  </script>
+</body>
+</html>

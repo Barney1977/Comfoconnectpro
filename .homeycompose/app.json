@@ -1,0 +1,32 @@
+{
+  "id": "com.zehnder.comfoconnect-pro",
+  "version": "1.1.0",
+  "compatibility": ">=12.2.0",
+  "sdk": 3,
+  "runtime": "nodejs",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Zehnder ComfoConnect Pro",
+    "nl": "Zehnder ComfoConnect Pro"
+  },
+  "description": {
+    "en": "Control and monitor your Zehnder ventilation unit via Modbus TCP + energy data",
+    "nl": "Bedien en monitor uw Zehnder ventilatieunit via Modbus TCP + energiedata"
+  },
+  "category": [
+    "climate"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Community",
+    "email": "info@example.com"
+  },
+  "brandColor": "#00A3E0"
+}

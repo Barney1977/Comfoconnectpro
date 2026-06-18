@@ -1,0 +1,337 @@
+{
+  "name": {
+    "en": "ComfoConnect Pro",
+    "nl": "ComfoConnect Pro"
+  },
+  "class": "fan",
+  "connectivity": [
+    "lan"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "energy": {
+    "meterPowerImportedCapability": "meter_power"
+  },
+  "pair": [
+    {
+      "id": "device",
+      "navigation": {
+        "next": "list_devices"
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "settings": [
+    {
+      "id": "ip",
+      "type": "text",
+      "label": {
+        "en": "IP Address",
+        "nl": "IP-adres"
+      },
+      "value": "192.168.1.100"
+    },
+    {
+      "id": "port",
+      "type": "number",
+      "label": {
+        "en": "Modbus TCP Port",
+        "nl": "Modbus TCP-poort"
+      },
+      "value": 502
+    },
+    {
+      "id": "unit_id",
+      "type": "number",
+      "label": {
+        "en": "Modbus Unit ID",
+        "nl": "Modbus-eenheid-ID"
+      },
+      "value": 1
+    },
+    {
+      "id": "poll_interval",
+      "type": "number",
+      "label": {
+        "en": "Poll interval (seconds)",
+        "nl": "Pollinterval (seconden)"
+      },
+      "value": 30
+    },
+    {
+      "id": "monitoring_enabled",
+      "type": "checkbox",
+      "label": {
+        "en": "Enable energy & fan monitoring (ComfoConnect protocol)",
+        "nl": "Energie- en ventilatiemonitoring inschakelen (ComfoConnect-protocol)"
+      },
+      "hint": {
+        "en": "Uses the binary ComfoConnect protocol (port 56747) to read power usage and fan data. This connection may be briefly interrupted when you open the ComfoControl app or when the Zehnder Cloud connects — it recovers automatically.",
+        "nl": "Gebruikt het binaire ComfoConnect-protocol (poort 56747) voor vermogen en ventilatordata. Deze verbinding kan kort worden onderbroken door de ComfoControl-app of Zehnder Cloud — herstel gaat automatisch."
+      },
+      "value": false
+    },
+    {
+      "id": "comfo_uuid",
+      "type": "text",
+      "label": {
+        "en": "Gateway UUID (auto-filled after first connection)",
+        "nl": "Gateway UUID (automatisch ingevuld na eerste verbinding)"
+      },
+      "hint": {
+        "en": "The UUID of your ComfoConnect Pro. Leave empty to auto-discover.",
+        "nl": "De UUID van uw ComfoConnect Pro. Leeg laten voor automatische detectie."
+      },
+      "value": ""
+    },
+    {
+      "id": "reconnect_delay_s",
+      "type": "number",
+      "label": {
+        "en": "Energy reconnect base delay (seconds)",
+        "nl": "Basisvertraging herverbinding energie (seconden)"
+      },
+      "hint": {
+        "en": "How long to wait before the first reconnect attempt after session loss. Doubles each attempt up to 5 minutes.",
+        "nl": "Wachttijd vóór de eerste herverbindingspoging na sessieverbreking. Verdubbelt per poging tot maximaal 5 minuten."
+      },
+      "value": 15
+    }
+  ],
+  "capabilities": [
+    "ventilation_preset",
+    "away_mode",
+    "boost_active",
+    "temperature_profile",
+    "target_temperature",
+    "measure_temperature.indoor",
+    "measure_temperature.outdoor",
+    "measure_temperature.supply",
+    "measure_temperature.exhaust",
+    "measure_humidity.indoor",
+    "measure_humidity.outdoor",
+    "filter_days_remaining",
+    "filter_replace_alarm",
+    "alarm_generic",
+    "connection_status",
+    "measure_power",
+    "meter_power",
+    "meter_power.year",
+    "measure_power.preheater",
+    "measure_water.supply",
+    "measure_water.exhaust",
+    "measure_rotation.supply",
+    "measure_rotation.exhaust",
+    "measure_humidity.duty_supply",
+    "measure_humidity.bypass",
+    "energy_session_status"
+  ],
+  "capabilitiesOptions": {
+    "measure_temperature.indoor": {
+      "title": {
+        "en": "Indoor temperature",
+        "nl": "Binnentemperatuur"
+      }
+    },
+    "measure_temperature.outdoor": {
+      "title": {
+        "en": "Outdoor temperature",
+        "nl": "Buitentemperatuur"
+      }
+    },
+    "measure_temperature.supply": {
+      "title": {
+        "en": "Supply air temperature",
+        "nl": "Toevoerluchttemperatuur"
+      }
+    },
+    "measure_temperature.exhaust": {
+      "title": {
+        "en": "Exhaust air temperature",
+        "nl": "Afvoerluchttemperatuur"
+      }
+    },
+    "measure_humidity.indoor": {
+      "title": {
+        "en": "Indoor humidity",
+        "nl": "Binnenvochtigheid"
+      }
+    },
+    "measure_humidity.outdoor": {
+      "title": {
+        "en": "Outdoor humidity",
+        "nl": "Buitenvochtigheid"
+      }
+    },
+    "filter_days_remaining": {
+      "title": {
+        "en": "Filter days remaining",
+        "nl": "Filterdagen resterend"
+      }
+    },
+    "filter_replace_alarm": {
+      "title": {
+        "en": "Filter replacement needed",
+        "nl": "Filtervervanging vereist"
+      }
+    },
+    "alarm_generic": {
+      "title": {
+        "en": "Unit alarm",
+        "nl": "Toestel alarm"
+      }
+    },
+    "connection_status": {
+      "title": {
+        "en": "Modbus connected",
+        "nl": "Modbus verbonden"
+      }
+    },
+    "ventilation_preset": {
+      "title": {
+        "en": "Ventilation preset",
+        "nl": "Ventilatiesnelheid"
+      }
+    },
+    "away_mode": {
+      "title": {
+        "en": "Away mode",
+        "nl": "Afwezigheidsmodus"
+      }
+    },
+    "boost_active": {
+      "title": {
+        "en": "Boost",
+        "nl": "Boost"
+      }
+    },
+    "temperature_profile": {
+      "title": {
+        "en": "Temperature profile",
+        "nl": "Temperatuurprofiel"
+      }
+    },
+    "measure_power": {
+      "title": {
+        "en": "Power usage",
+        "nl": "Vermogenverbruik"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W"
+      }
+    },
+    "meter_power": {
+      "title": {
+        "en": "Energy (total)",
+        "nl": "Energie (totaal)"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      }
+    },
+    "meter_power.year": {
+      "title": {
+        "en": "Energy (this year)",
+        "nl": "Energie (dit jaar)"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      }
+    },
+    "measure_power.preheater": {
+      "title": {
+        "en": "Preheater power",
+        "nl": "Voorverwarmer vermogen"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W"
+      }
+    },
+    "measure_water.supply": {
+      "title": {
+        "en": "Supply air flow",
+        "nl": "Toevoer luchtdebiet"
+      },
+      "units": {
+        "en": "m³/h",
+        "nl": "m³/h"
+      }
+    },
+    "measure_water.exhaust": {
+      "title": {
+        "en": "Exhaust air flow",
+        "nl": "Afvoer luchtdebiet"
+      },
+      "units": {
+        "en": "m³/h",
+        "nl": "m³/h"
+      }
+    },
+    "measure_rotation.supply": {
+      "title": {
+        "en": "Supply fan speed",
+        "nl": "Toevoerventilator toerental"
+      },
+      "units": {
+        "en": "RPM",
+        "nl": "RPM"
+      }
+    },
+    "measure_rotation.exhaust": {
+      "title": {
+        "en": "Exhaust fan speed",
+        "nl": "Afvoerventilator toerental"
+      },
+      "units": {
+        "en": "RPM",
+        "nl": "RPM"
+      }
+    },
+    "measure_humidity.duty_supply": {
+      "title": {
+        "en": "Supply fan duty",
+        "nl": "Toevoerventilator belasting"
+      }
+    },
+    "measure_humidity.bypass": {
+      "title": {
+        "en": "Bypass position",
+        "nl": "Bypass stand"
+      }
+    },
+    "energy_session_status": {
+      "title": {
+        "en": "Energy session active",
+        "nl": "Energiesessie actief"
+      }
+    },
+    "target_temperature": {
+      "title": {
+        "en": "Supply air setpoint",
+        "nl": "Toevoerlucht setpoint"
+      },
+      "min": 10,
+      "max": 35,
+      "step": 0.5
+    }
+  },
+  "images": {
+    "small": "/drivers/zehnder-comfoconnect-pro/assets/small.png",
+    "large": "/drivers/zehnder-comfoconnect-pro/assets/large.png"
+  }
+}

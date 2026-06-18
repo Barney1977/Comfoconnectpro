@@ -1,0 +1,32 @@
+{
+  "pair": {
+    "ip_label": "IP-adres",
+    "ip_hint": "Zoek het IP-adres op via http://comfoconnectpro.local of in uw router",
+    "port_label": "Modbus TCP-poort",
+    "unit_id_label": "Eenheid-ID",
+    "unit_id_hint": "Standaard is 1.",
+    "device_name": "Zehnder ComfoConnect Pro"
+  },
+  "device": {
+    "disconnected": "Verbinding verbroken — controleer IP-adres en netwerk"
+  },
+  "errors": {
+    "ip_required": "IP-adres is vereist",
+    "port_invalid": "Poortnummer is ongeldig (moet 1–65535 zijn)",
+    "not_connected": "Geen verbinding met ComfoConnect Pro"
+  },
+  "warnings": {
+    "filter_replace": "Filtervervanging vereist!",
+    "energy_session_lost": "Energiesessie onderbroken (ComfoControl-app of Zehnder Cloud actief) — automatisch herstellen",
+    "energy_disconnected": "Energiemonitoringverbinding verbroken — automatisch herstellen"
+  },
+  "settings": {
+    "ip": "IP-adres",
+    "port": "Modbus TCP-poort",
+    "unit_id": "Modbus-eenheid-ID",
+    "poll_interval": "Pollinterval (seconden)",
+    "energy_enabled": "Energie- en ventilatiemonitoring inschakelen",
+    "comfo_uuid": "Gateway UUID",
+    "energy_reconnect_delay": "Basisvertraging herverbinding energie (seconden)"
+  }
+}

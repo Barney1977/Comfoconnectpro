@@ -1,0 +1,32 @@
+{
+  "pair": {
+    "ip_label": "IP Address",
+    "ip_hint": "Find the IP at http://comfoconnectpro.local or in your router",
+    "port_label": "Modbus TCP Port",
+    "unit_id_label": "Unit ID",
+    "unit_id_hint": "Default is 1.",
+    "device_name": "Zehnder ComfoConnect Pro"
+  },
+  "device": {
+    "disconnected": "Disconnected — check IP address and network"
+  },
+  "errors": {
+    "ip_required": "IP address is required",
+    "port_invalid": "Port number is invalid (must be 1–65535)",
+    "not_connected": "Not connected to ComfoConnect Pro"
+  },
+  "warnings": {
+    "filter_replace": "Filter replacement needed!",
+    "energy_session_lost": "Energy session interrupted (ComfoControl app or Zehnder Cloud active) — reconnecting automatically",
+    "energy_disconnected": "Energy monitoring connection lost — reconnecting automatically"
+  },
+  "settings": {
+    "ip": "IP Address",
+    "port": "Modbus TCP Port",
+    "unit_id": "Modbus Unit ID",
+    "poll_interval": "Poll interval (seconds)",
+    "energy_enabled": "Enable energy & fan monitoring",
+    "comfo_uuid": "Gateway UUID",
+    "energy_reconnect_delay": "Energy reconnect base delay (seconds)"
+  }
+}

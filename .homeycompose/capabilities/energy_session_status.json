@@ -1,0 +1,10 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Energy session active",
+    "nl": "Energiesessie actief"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

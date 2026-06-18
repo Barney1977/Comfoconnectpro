@@ -1,0 +1,511 @@
+{
+  "triggers": [
+    {
+      "id": "filter_replace_needed",
+      "title": {
+        "en": "Filter replacement needed",
+        "nl": "Filtervervanging vereist"
+      }
+    },
+    {
+      "id": "ventilation_preset_changed",
+      "title": {
+        "en": "Ventilation preset changed",
+        "nl": "Ventilatiesnelheid gewijzigd"
+      },
+      "tokens": [
+        {
+          "name": "preset",
+          "type": "number",
+          "title": {
+            "en": "Preset (0–3)",
+            "nl": "Voorinstelling (0–3)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "preset_is_away",
+      "title": {
+        "en": "Ventilation switched to away",
+        "nl": "Ventilatie op afwezig gezet"
+      }
+    },
+    {
+      "id": "preset_is_low",
+      "title": {
+        "en": "Ventilation switched to low",
+        "nl": "Ventilatie op laag gezet"
+      }
+    },
+    {
+      "id": "preset_is_medium",
+      "title": {
+        "en": "Ventilation switched to medium",
+        "nl": "Ventilatie op midden gezet"
+      }
+    },
+    {
+      "id": "preset_is_high",
+      "title": {
+        "en": "Ventilation switched to high",
+        "nl": "Ventilatie op hoog gezet"
+      }
+    },
+    {
+      "id": "alarm_turned_on",
+      "title": {
+        "en": "Unit alarm activated",
+        "nl": "Toestel alarm geactiveerd"
+      },
+      "hint": {
+        "en": "Triggered when the ventilation unit reports an error.",
+        "nl": "Wordt geactiveerd wanneer de ventilatieunit een fout meldt."
+      }
+    },
+    {
+      "id": "alarm_turned_off",
+      "title": {
+        "en": "Unit alarm cleared",
+        "nl": "Toestel alarm opgeheven"
+      }
+    },
+    {
+      "id": "energy_session_lost",
+      "title": {
+        "en": "Energy session interrupted",
+        "nl": "Energiesessie onderbroken"
+      },
+      "hint": {
+        "en": "Triggered when the ComfoControl app or Zehnder Cloud takes over the energy connection.",
+        "nl": "Wordt geactiveerd wanneer de ComfoControl-app of Zehnder Cloud de energieverbinding overneemt."
+      }
+    },
+    {
+      "id": "energy_session_restored",
+      "title": {
+        "en": "Energy session restored",
+        "nl": "Energiesessie hersteld"
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "id": "is_away_mode",
+      "title": {
+        "en": "Away mode is !{{active|inactive}}",
+        "nl": "Afwezigheidsmodus is !{{actief|inactief}}"
+      }
+    },
+    {
+      "id": "is_boost_active",
+      "title": {
+        "en": "Boost (party timer) is !{{active|inactive}}",
+        "nl": "Boost (partytimer) is !{{actief|inactief}}"
+      }
+    },
+    {
+      "id": "filter_needs_replacement",
+      "title": {
+        "en": "Filter !{{needs|does not need}} replacement",
+        "nl": "Filter !{{moet|hoeft niet}} vervangen te worden"
+      }
+    },
+    {
+      "id": "energy_session_active",
+      "title": {
+        "en": "Energy session is !{{active|inactive}}",
+        "nl": "Energiesessie is !{{actief|inactief}}"
+      }
+    },
+    {
+      "id": "ventilation_preset_is",
+      "title": {
+        "en": "Ventilation preset !{{is|is not}}",
+        "nl": "Ventilatiesnelheid !{{is|is niet}}"
+      },
+      "args": [
+        {
+          "name": "preset",
+          "type": "dropdown",
+          "title": {
+            "en": "Preset",
+            "nl": "Voorinstelling"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Away (0)",
+                "nl": "Afwezig (0)"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low (1)",
+                "nl": "Laag (1)"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium (2)",
+                "nl": "Midden (2)"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High (3)",
+                "nl": "Hoog (3)"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Ventilation preset [[preset]]",
+        "nl": "Ventilatiesnelheid [[preset]]"
+      }
+    },
+    {
+      "id": "temperature_profile_is",
+      "title": {
+        "en": "Temperature profile !{{is|is not}}",
+        "nl": "Temperatuurprofiel !{{is|is niet}}"
+      },
+      "args": [
+        {
+          "name": "profile",
+          "type": "dropdown",
+          "title": {
+            "en": "Profile",
+            "nl": "Profiel"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Normal",
+                "nl": "Normaal"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Cool",
+                "nl": "Koel"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Warm",
+                "nl": "Warm"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Temperature profile [[profile]]",
+        "nl": "Temperatuurprofiel [[profile]]"
+      }
+    },
+    {
+      "id": "unit_alarm_active",
+      "title": {
+        "en": "Unit alarm is !{{active|inactive}}",
+        "nl": "Toestel alarm is !{{actief|inactief}}"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "set_ventilation_preset",
+      "title": {
+        "en": "Set ventilation preset",
+        "nl": "Ventilatiesnelheid instellen"
+      },
+      "titleFormatted": {
+        "en": "Set ventilation preset to [[preset]]",
+        "nl": "Ventilatiesnelheid instellen op [[preset]]"
+      },
+      "args": [
+        {
+          "name": "preset",
+          "type": "dropdown",
+          "title": {
+            "en": "Preset",
+            "nl": "Voorinstelling"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Away (0)",
+                "nl": "Afwezig (0)"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low (1)",
+                "nl": "Laag (1)"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium (2)",
+                "nl": "Midden (2)"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High (3)",
+                "nl": "Hoog (3)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set_away_mode",
+      "title": {
+        "en": "Set away mode",
+        "nl": "Afwezigheidsmodus instellen"
+      },
+      "titleFormatted": {
+        "en": "Set away mode [[enabled]]",
+        "nl": "Afwezigheidsmodus [[enabled]]"
+      },
+      "args": [
+        {
+          "name": "enabled",
+          "type": "dropdown",
+          "title": {
+            "en": "State",
+            "nl": "Status"
+          },
+          "values": [
+            {
+              "id": "true",
+              "label": {
+                "en": "Active",
+                "nl": "Actief"
+              }
+            },
+            {
+              "id": "false",
+              "label": {
+                "en": "Inactive",
+                "nl": "Inactief"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set_boost",
+      "title": {
+        "en": "Activate boost (party timer)",
+        "nl": "Boost activeren (partytimer)"
+      },
+      "titleFormatted": {
+        "en": "Activate boost for [[duration_minutes]] minutes",
+        "nl": "Boost activeren voor [[duration_minutes]] minuten"
+      },
+      "args": [
+        {
+          "name": "duration_minutes",
+          "type": "number",
+          "min": 1,
+          "max": 1440,
+          "title": {
+            "en": "Duration (minutes)",
+            "nl": "Duur (minuten)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stop_boost",
+      "title": {
+        "en": "Stop boost (party timer)",
+        "nl": "Boost stoppen (partytimer)"
+      },
+      "titleFormatted": {
+        "en": "Stop boost (party timer)",
+        "nl": "Boost stoppen (partytimer)"
+      }
+    },
+    {
+      "id": "set_temperature_profile",
+      "title": {
+        "en": "Set temperature profile",
+        "nl": "Temperatuurprofiel instellen"
+      },
+      "titleFormatted": {
+        "en": "Set temperature profile to [[profile]]",
+        "nl": "Temperatuurprofiel instellen op [[profile]]"
+      },
+      "args": [
+        {
+          "name": "profile",
+          "type": "dropdown",
+          "title": {
+            "en": "Profile",
+            "nl": "Profiel"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Normal",
+                "nl": "Normaal"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Cool",
+                "nl": "Koel"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Warm",
+                "nl": "Warm"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reset_errors",
+      "title": {
+        "en": "Reset ventilation unit errors",
+        "nl": "Fouten ventilatieunit resetten"
+      },
+      "titleFormatted": {
+        "en": "Reset ventilation unit errors",
+        "nl": "Fouten ventilatieunit resetten"
+      }
+    },
+    {
+      "id": "set_external_setpoint",
+      "title": {
+        "en": "Set supply air setpoint",
+        "nl": "Toevoerlucht setpoint instellen"
+      },
+      "titleFormatted": {
+        "en": "Set supply air setpoint to [[temperature]] °C",
+        "nl": "Toevoerlucht setpoint instellen op [[temperature]] °C"
+      },
+      "hint": {
+        "en": "Sets the external temperature setpoint. ≤19°C adjusts Cool profile, 19–23°C Normal, ≥23°C Warm. Requires temperature profile mode 0, 1 or 2.",
+        "nl": "Stelt het externe temperatuursetpoint in. ≤19°C past Koel-profiel aan, 19–23°C Normaal, ≥23°C Warm. Vereist temperatuurprofielmodus 0, 1 of 2."
+      },
+      "args": [
+        {
+          "name": "temperature",
+          "type": "number",
+          "min": 10,
+          "max": 35,
+          "title": {
+            "en": "Temperature (°C)",
+            "nl": "Temperatuur (°C)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "set_temperature_profile_mode",
+      "title": {
+        "en": "Set temperature profile mode",
+        "nl": "Temperatuurprofielmodus instellen"
+      },
+      "titleFormatted": {
+        "en": "Set temperature profile mode to [[mode]]",
+        "nl": "Temperatuurprofielmodus instellen op [[mode]]"
+      },
+      "args": [
+        {
+          "name": "mode",
+          "type": "dropdown",
+          "title": {
+            "en": "Mode",
+            "nl": "Modus"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Adaptive",
+                "nl": "Adaptief"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Fixed",
+                "nl": "Vast"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "External setpoint",
+                "nl": "Extern setpoint"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set_comfoclime",
+      "title": {
+        "en": "Set ComfoClime",
+        "nl": "ComfoClime instellen"
+      },
+      "titleFormatted": {
+        "en": "Set ComfoClime [[enabled]]",
+        "nl": "ComfoClime [[enabled]]"
+      },
+      "args": [
+        {
+          "name": "enabled",
+          "type": "dropdown",
+          "title": {
+            "en": "State",
+            "nl": "Status"
+          },
+          "values": [
+            {
+              "id": "true",
+              "label": {
+                "en": "On (automatic)",
+                "nl": "Aan (automatisch)"
+              }
+            },
+            {
+              "id": "false",
+              "label": {
+                "en": "Off",
+                "nl": "Uit"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

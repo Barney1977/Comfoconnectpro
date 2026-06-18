@@ -1,0 +1,33 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Temperature profile",
+    "nl": "Temperatuurprofiel"
+  },
+  "values": [
+    {
+      "id": "0",
+      "title": {
+        "en": "Normal",
+        "nl": "Normaal"
+      }
+    },
+    {
+      "id": "1",
+      "title": {
+        "en": "Cool",
+        "nl": "Koel"
+      }
+    },
+    {
+      "id": "2",
+      "title": {
+        "en": "Warm",
+        "nl": "Warm"
+      }
+    }
+  ],
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker"
+}
