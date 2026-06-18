@@ -219,6 +219,17 @@
         "en": "Unit alarm is !{{active|inactive}}",
         "nl": "Toestel alarm is !{{actief|inactief}}"
       }
+    },
+    {
+      "id": "is_auto_mode",
+      "title": {
+        "en": "Auto mode is !{{active|inactive}}",
+        "nl": "Automodus is !{{actief|inactief}}"
+      },
+      "titleFormatted": {
+        "en": "Auto mode is !{{active|inactive}}",
+        "nl": "Automodus is !{{actief|inactief}}"
+      }
     }
   ],
   "actions": [
@@ -501,6 +512,43 @@
               "label": {
                 "en": "Off",
                 "nl": "Uit"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set_auto_mode",
+      "title": {
+        "en": "Set auto mode",
+        "nl": "Automodus instellen"
+      },
+      "titleFormatted": {
+        "en": "Set auto mode [[enabled]]",
+        "nl": "Automodus [[enabled]]"
+      },
+      "args": [
+        {
+          "name": "enabled",
+          "type": "dropdown",
+          "title": {
+            "en": "State",
+            "nl": "Status"
+          },
+          "values": [
+            {
+              "id": "true",
+              "label": {
+                "en": "Auto",
+                "nl": "Auto"
+              }
+            },
+            {
+              "id": "false",
+              "label": {
+                "en": "Manual",
+                "nl": "Manueel"
               }
             }
           ]
