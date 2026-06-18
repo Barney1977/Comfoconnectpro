@@ -8,11 +8,17 @@ class ZehnderComfoConnectProApp extends Homey.App {
     // These happen when the ComfoConnect Pro sends malformed TCP packets
     // (typically when both Modbus and binary protocol are active simultaneously)
     process.on('uncaughtException', (err) => {
-      if (err && err.code === 'ERR_OUT_OF_RANGE') {
-        this.log('WARNING: comfoairq bridge buffer error caught — will auto-recover:', err.message);
-        // Do not rethrow — let the EnergyManager reconnect logic handle it
+      // Catch known comfoairq library errors that occur on malformed/fragmented
+      // TCP packets from the ComfoConnect Pro binary protocol
+      const isComfoairqError = err && err.stack && (
+        err.stack.includes('comfoairq') ||
+        err.stack.includes('analysis.js') ||
+        err.stack.includes('bridge.js')
+      );
+      if (isComfoairqError) {
+        this.log('WARNING: comfoairq library error caught — will auto-recover:', err.message);
+        // Do not rethrow — EnergyManager reconnect logic handles this
       } else {
-        // Unknown error — log and rethrow
         this.error('Uncaught exception:', err);
         throw err;
       }
