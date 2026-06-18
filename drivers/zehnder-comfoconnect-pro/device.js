@@ -90,6 +90,20 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       this._scheduleModbusReconnect();
     });
 
+
+    // ── Capability migration: add new capabilities to existing devices ────────
+    const newCaps = ['auto_mode'];
+    for (const cap of newCaps) {
+      if (!this.hasCapability(cap)) {
+        try {
+          await this.addCapability(cap);
+          this.log('Migration: added capability', cap);
+        } catch (err) {
+          this.log('Migration: failed to add capability', cap, err.message);
+        }
+      }
+    }
+
     // ── Capability listeners (UI + capability triggers → Modbus write) ────────
     this.registerCapabilityListener('ventilation_preset', async (v) => {
       await this.setVentilationPreset(Number(v));
