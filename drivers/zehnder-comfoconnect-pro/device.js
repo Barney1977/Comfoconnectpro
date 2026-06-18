@@ -141,7 +141,10 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
           this.log('→ Enter the gateway UUID manually in Device Settings');
         });
       } else {
+        // Delay energy session start to let Modbus stabilize first
+      this.homey.setTimeout(() => {
         this._energyManager.enable().catch(err => this.log('EnergyManager start error:', err.message));
+      }, 3000);
       }
     }
 
@@ -203,6 +206,8 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
     await this.setSettings({ comfo_uuid: uuid });
     this._settings.comfo_uuid = uuid;
     this._energyManager._comfouuid = uuid;
+    // Delay to avoid collision with active Modbus polling
+    await new Promise(r => setTimeout(r, 3000));
     await this._energyManager.enable();
   }
 
