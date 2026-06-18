@@ -13,32 +13,32 @@ const CONNECT_TIMEOUT_MS = 8 * 1000;
 // All addresses 0-based (protocol address = datasheet address − 1)
 //
 // Discrete Inputs (read-only bool)
-const REG_DI_ERROR_FLAG     = 0x0001; // Fehlerprotokoll
-const REG_DI_FILTER_REPLACE = 0x0004; // Filter tauschen
+const REG_DI_ERROR_FLAG     = 0x0000; // Fehlerprotokoll
+const REG_DI_FILTER_REPLACE = 0x0003; // Filter tauschen
 
 // Input Registers (read-only numeric)
-const REG_IR_CONNECTION_STATUS = 0x0001; // Verbindungsstatus
-const REG_IR_ROOM_TEMP         = 0x0008; // Raumtemperatur °C*10
-const REG_IR_EXHAUST_TEMP      = 0x0009; // SENSOR_ETA °C*10
-const REG_IR_OUTDOOR_TEMP      = 0x000B; // SENSOR_ODA °C*10
-const REG_IR_SUPPLY_TEMP       = 0x000C; // SENSOR_SUP °C*10
-const REG_IR_ROOM_HUMIDITY     = 0x000D; // Raumfeuchte %
-const REG_IR_OUTDOOR_HUMIDITY  = 0x0010; // HUMID_ODA %
-const REG_IR_FILTER_STATUS     = 0x001A; // Filterstatus days
+const REG_IR_CONNECTION_STATUS = 0x0000; // Verbindungsstatus
+const REG_IR_ROOM_TEMP         = 0x0007; // Raumtemperatur °C*10
+const REG_IR_EXHAUST_TEMP      = 0x0008; // SENSOR_ETA °C*10
+const REG_IR_OUTDOOR_TEMP      = 0x000A; // SENSOR_ODA °C*10
+const REG_IR_SUPPLY_TEMP       = 0x000B; // SENSOR_SUP °C*10
+const REG_IR_ROOM_HUMIDITY     = 0x000C; // Raumfeuchte %
+const REG_IR_OUTDOOR_HUMIDITY  = 0x000F; // HUMID_ODA %
+const REG_IR_FILTER_STATUS     = 0x0019; // Filterstatus days
 
 // Coils (R/W bool)
-const REG_COIL_ERROR_RESET   = 0x0001;
-const REG_COIL_PRESET_AWAY   = 0x0002;
-const REG_COIL_PRESET_1      = 0x0003;
-const REG_COIL_PARTY_TIMER   = 0x0007;
-const REG_COIL_COMFOCLIME    = 0x0009;
+const REG_COIL_ERROR_RESET   = 0x0000;
+const REG_COIL_PRESET_AWAY   = 0x0001;
+const REG_COIL_PRESET_1      = 0x0002;
+const REG_COIL_PARTY_TIMER   = 0x0006;
+const REG_COIL_COMFOCLIME    = 0x0008;
 
 // Holding Registers (R/W numeric)
-const REG_HR_VENTILATION_PRESET  = 0x0001; // Lüftungsvoreinstellung 0-3
-const REG_HR_TEMPERATURE_PROFILE = 0x0002; // Temperatur Profil 0-2
-const REG_HR_TEMP_PROFILE_MODE   = 0x0003; // Temperatur Profil Modus 0-2
-const REG_HR_EXTERNAL_SETPOINT   = 0x0004; // Externer Sollwert °C*10 (ushort)
-const REG_HR_PARTY_TIMER_SECONDS = 0x0005; // Party timer in Sekunden
+const REG_HR_VENTILATION_PRESET  = 0x0000; // Lüftungsvoreinstellung 0-3
+const REG_HR_TEMPERATURE_PROFILE = 0x0001; // Temperatur Profil 0-2
+const REG_HR_TEMP_PROFILE_MODE   = 0x0002; // Temperatur Profil Modus 0-2
+const REG_HR_EXTERNAL_SETPOINT   = 0x0003; // Externer Sollwert °C*10 (ushort)
+const REG_HR_PARTY_TIMER_SECONDS = 0x0004; // Party timer in Sekunden
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function toSigned16(v)      { return v > 32767 ? v - 65536 : v; }
@@ -75,6 +75,10 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       this.log('Modbus TCP connected');
       this.setAvailable().catch(() => {});
       this._setCapSafe('connection_status', true);
+      if (!this._diagnosticsRun) {
+        this._diagnosticsRun = true;
+        this._runModbusDiagnostics().catch(err => this.log('Diagnostics error:', err.message));
+      }
       this._startPolling();
     });
     this._socket.on('end',     () => this.log('Modbus socket ended'));
@@ -232,6 +236,58 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
 
   // ── Polling ───────────────────────────────────────────────────────────────
 
+
+  // ── One-time Modbus diagnostics ──────────────────────────────────────────
+  async _runModbusDiagnostics() {
+    this.log('Modbus diagnostics: testing function codes...');
+
+    // Test FC4: Read Input Registers (most important - temperatures/humidity)
+    try {
+      const r = await this._client.readInputRegisters(0x0000, 1);
+      this.log('FC4 readInputRegisters(0x0000): OK, value =', r.response._body.valuesAsArray[0]);
+    } catch(e) {
+      const code = e.response && e.response.body && e.response.body.code;
+      this.log('FC4 readInputRegisters(0x0000): FAILED, exception code:', code, e.message);
+      // Try address 0x0001
+      try {
+        const r2 = await this._client.readInputRegisters(0x0001, 1);
+        this.log('FC4 readInputRegisters(0x0001): OK → device uses 1-based addressing!');
+        this._modbusAddressOffset = 1;
+      } catch(e2) {
+        this.log('FC4 readInputRegisters(0x0001): also FAILED');
+      }
+    }
+
+    // Test FC3: Read Holding Registers
+    try {
+      const r = await this._client.readHoldingRegisters(0x0000, 1);
+      this.log('FC3 readHoldingRegisters(0x0000): OK, value =', r.response._body.valuesAsArray[0]);
+    } catch(e) {
+      const code = e.response && e.response.body && e.response.body.code;
+      this.log('FC3 readHoldingRegisters(0x0000): FAILED, exception code:', code);
+    }
+
+    // Test FC2: Read Discrete Inputs
+    try {
+      const r = await this._client.readDiscreteInputs(0x0000, 1);
+      this.log('FC2 readDiscreteInputs(0x0000): OK');
+    } catch(e) {
+      const code = e.response && e.response.body && e.response.body.code;
+      this.log('FC2 readDiscreteInputs(0x0000): FAILED, exception code:', code);
+    }
+
+    // Test FC1: Read Coils
+    try {
+      const r = await this._client.readCoils(0x0000, 1);
+      this.log('FC1 readCoils(0x0000): OK');
+    } catch(e) {
+      const code = e.response && e.response.body && e.response.body.code;
+      this.log('FC1 readCoils(0x0000): FAILED, exception code:', code);
+    }
+
+    this.log('Modbus diagnostics complete');
+  }
+
   _startPolling() {
     this._stopPolling();
     const ms = (Number(this._settings.poll_interval) || 30) * 1000;
@@ -263,24 +319,23 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       await this._setCapSafe('alarm_generic', errorFlag);
       await this._setCapSafe('filter_replace_alarm', filterAlarm);
 
-      // Trigger: filter alarm rising edge
-      if (filterAlarm && this._lastFilterAlarm === false) {
-        this._triggerDevice('filter_replace_needed');
-      }
-      // Trigger: unit alarm edges
-      if (errorFlag && this._lastAlarmGeneric === false) {
-        this._triggerDevice('alarm_turned_on');
-      }
-      if (!errorFlag && this._lastAlarmGeneric === true) {
-        this._triggerDevice('alarm_turned_off');
-      }
-      // Only update after first real read (null = not yet seen)
-      if (this._lastFilterAlarm !== null)  this._lastFilterAlarm  = filterAlarm;
-      else                                 this._lastFilterAlarm  = filterAlarm;
-      if (this._lastAlarmGeneric !== null) this._lastAlarmGeneric = errorFlag;
-      else                                 this._lastAlarmGeneric = errorFlag;
+      if (filterAlarm && this._lastFilterAlarm === false) this._triggerDevice('filter_replace_needed');
+      if (errorFlag   && this._lastAlarmGeneric === false) this._triggerDevice('alarm_turned_on');
+      if (!errorFlag  && this._lastAlarmGeneric === true)  this._triggerDevice('alarm_turned_off');
+      this._lastFilterAlarm  = filterAlarm;
+      this._lastAlarmGeneric = errorFlag;
+      this._diSupported = true;
 
-    } catch (err) { this.log('pollDI err:', err.message, 'code:', err.response && err.response.body && err.response.body.code); }
+    } catch (err) {
+      const code = err.response && err.response.body && err.response.body.code;
+      // FC2 not supported (code 1) → log once and skip permanently
+      if (code === 1 && this._diSupported !== false) {
+        this.log('pollDI: FC2 (readDiscreteInputs) not supported by device — disabling');
+        this._diSupported = false;
+      } else if (this._diSupported !== false) {
+        this.log('pollDI err:', err.message, 'exception code:', code);
+      }
+    }
   }
 
   async _pollInputRegisters() {
