@@ -198,6 +198,8 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
       });
     });
     this.log('Discovered UUID:', uuid);
+    // Small delay to avoid race with onSettings still pending
+    await new Promise(r => setTimeout(r, 500));
     await this.setSettings({ comfo_uuid: uuid });
     this._settings.comfo_uuid = uuid;
     this._energyManager._comfouuid = uuid;
