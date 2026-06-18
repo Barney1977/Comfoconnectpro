@@ -258,6 +258,17 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   // ── Polling ───────────────────────────────────────────────────────────────
 
 
+  _setModbusPollInterval(ms) {
+    if (this._pollingTimer) {
+      this.homey.clearInterval(this._pollingTimer);
+      this._pollingTimer = this.homey.setInterval(async () => {
+        if (!this._modbusConnected) return;
+        try { await this._pollAll(); } catch (err) { this.log('Poll error:', err.message); }
+      }, ms);
+      this.log('Modbus poll interval set to', ms/1000, 's');
+    }
+  }
+
   _startPolling() {
     this._stopPolling();
     const ms = (Number(this._settings.poll_interval) || 30) * 1000;
