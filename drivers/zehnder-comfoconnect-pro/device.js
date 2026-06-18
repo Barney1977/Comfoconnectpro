@@ -395,6 +395,13 @@ module.exports = class ZehnderComfoConnectProDevice extends Homey.Device {
   async setVentilationPreset(preset) {
     this._requireModbus();
     if (preset < 0 || preset > 3) throw new Error('Preset must be 0–3');
+    // Disable auto mode first — manual preset overrides auto
+    const autoWasOn = this.getCapabilityValue('auto_mode');
+    if (autoWasOn) {
+      await this._writeWithRetry(() => this._client.writeSingleCoil(REG_COIL_AUTO_MODE, false), 'setVentilationPreset:disableAuto');
+      await this._setCapSafe('auto_mode', false);
+      this.log('Auto mode disabled automatically (manual preset selected)');
+    }
     await this._writeWithRetry(() => this._client.writeSingleRegister(REG_HR_VENTILATION_PRESET, preset), 'setVentilationPreset');
     await this._setCapSafe('ventilation_preset', String(preset));
     await this._setCapSafe('away_mode', preset === 0);
