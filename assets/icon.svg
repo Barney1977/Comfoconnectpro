@@ -1,6 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="48" fill="#00A3E0"/>
-  <path d="M25 50 A25 25 0 1 1 50 75 L50 50 Z" fill="white" opacity="0.9"/>
-  <path d="M75 50 A25 25 0 1 1 50 25 L50 50 Z" fill="white" opacity="0.6"/>
-  <circle cx="50" cy="50" r="8" fill="#00A3E0"/>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="50" fill="#00A3E0"/>
+  
+  <!-- Device body shape -->
+  <rect x="18" y="32" width="64" height="40" rx="6" fill="white" opacity="0.95"/>
+  
+  <!-- Top accent on device -->
+  <rect x="18" y="32" width="64" height="7" rx="4" fill="#0085b8"/>
+  
+  <!-- WiFi/connection symbol -->
+  <path d="M50 54 m-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0" fill="#00A3E0"/>
+  <path d="M42 49 Q50 41 58 49" fill="none" stroke="#00A3E0" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M37 44 Q50 33 63 44" fill="none" stroke="#00A3E0" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- LED dots -->
+  <circle cx="68" cy="40" r="2.5" fill="#00c853"/>
+  <circle cx="74" cy="40" r="2.5" fill="#00A3E0"/>
+  
+  <!-- Bottom connector block -->
+  <rect x="22" y="62" width="20" height="8" rx="2" fill="#e8f4fc"/>
+  <rect x="24" y="63.5" width="3" height="5" rx="1" fill="#c8a44a"/>
+  <rect x="29" y="63.5" width="3" height="5" rx="1" fill="#4a9a5a"/>
+  <rect x="34" y="63.5" width="3" height="5" rx="1" fill="#6a6a8a"/>
 </svg>
