@@ -1,11 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="22" fill="#E3000F"/>
-  <circle cx="50" cy="44" r="26" fill="none" stroke="white" stroke-width="4"/>
-  <circle cx="50" cy="44" r="6" fill="white"/>
-  <path d="M50 18 C44 28 44 36 50 40 C56 36 56 28 50 18Z" fill="white"/>
-  <path d="M50 70 C56 60 56 52 50 48 C44 52 44 60 50 70Z" fill="white"/>
-  <path d="M24 44 C34 38 42 38 46 44 C42 50 34 50 24 44Z" fill="white"/>
-  <path d="M76 44 C66 50 58 50 54 44 C58 38 66 38 76 44Z" fill="white"/>
-  <circle cx="50" cy="44" r="6" fill="#E3000F"/>
-  <text x="50" y="88" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="white" letter-spacing="0.5">zehnder</text>
+  <!-- Fan/ventilation wheel — white paths on transparent background -->
+  <!-- Homey renders this on brandColor (#E3000F) background automatically -->
+  
+  <!-- Outer ring -->
+  <circle cx="50" cy="46" r="30" fill="none" stroke="white" stroke-width="5"/>
+  
+  <!-- Fan blades — 4 blades -->
+  <path d="M50 16 C43 26 43 36 50 40 C57 36 57 26 50 16Z" fill="white"/>
+  <path d="M50 76 C57 66 57 56 50 52 C43 56 43 66 50 76Z" fill="white"/>
+  <path d="M20 46 C30 39 40 39 44 46 C40 53 30 53 20 46Z" fill="white"/>
+  <path d="M80 46 C70 53 60 53 56 46 C60 39 70 39 80 46Z" fill="white"/>
+  
+  <!-- Center hub -->
+  <circle cx="50" cy="46" r="7" fill="white"/>
+  
+  <!-- zehnder text -->
+  <text x="50" y="92" text-anchor="middle" 
+        font-family="Arial,Helvetica,sans-serif" 
+        font-size="11" font-weight="bold" 
+        fill="white" letter-spacing="0.3">zehnder</text>
 </svg>
