@@ -10,5 +10,8 @@
     "homey": "^4.3.0",
     "homey-lib": "^2.50.3",
     "jimp": "^1.6.1"
+  },
+  "scripts": {
+    "postinstall": "node scripts/patch-comfoairq.js"
   }
 }

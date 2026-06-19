@@ -1,25 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Background circle -->
-  <circle cx="50" cy="50" r="50" fill="#00A3E0"/>
-  
-  <!-- Device body shape -->
-  <rect x="18" y="32" width="64" height="40" rx="6" fill="white" opacity="0.95"/>
-  
-  <!-- Top accent on device -->
-  <rect x="18" y="32" width="64" height="7" rx="4" fill="#0085b8"/>
-  
-  <!-- WiFi/connection symbol -->
-  <path d="M50 54 m-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0" fill="#00A3E0"/>
-  <path d="M42 49 Q50 41 58 49" fill="none" stroke="#00A3E0" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M37 44 Q50 33 63 44" fill="none" stroke="#00A3E0" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-  
-  <!-- LED dots -->
-  <circle cx="68" cy="40" r="2.5" fill="#00c853"/>
-  <circle cx="74" cy="40" r="2.5" fill="#00A3E0"/>
-  
-  <!-- Bottom connector block -->
-  <rect x="22" y="62" width="20" height="8" rx="2" fill="#e8f4fc"/>
-  <rect x="24" y="63.5" width="3" height="5" rx="1" fill="#c8a44a"/>
-  <rect x="29" y="63.5" width="3" height="5" rx="1" fill="#4a9a5a"/>
-  <rect x="34" y="63.5" width="3" height="5" rx="1" fill="#6a6a8a"/>
+  <rect width="100" height="100" rx="22" fill="#E3000F"/>
+  <circle cx="50" cy="44" r="26" fill="none" stroke="white" stroke-width="4"/>
+  <circle cx="50" cy="44" r="6" fill="white"/>
+  <path d="M50 18 C44 28 44 36 50 40 C56 36 56 28 50 18Z" fill="white"/>
+  <path d="M50 70 C56 60 56 52 50 48 C44 52 44 60 50 70Z" fill="white"/>
+  <path d="M24 44 C34 38 42 38 46 44 C42 50 34 50 24 44Z" fill="white"/>
+  <path d="M76 44 C66 50 58 50 54 44 C58 38 66 38 76 44Z" fill="white"/>
+  <circle cx="50" cy="44" r="6" fill="#E3000F"/>
+  <text x="50" y="88" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="white" letter-spacing="0.5">zehnder</text>
 </svg>

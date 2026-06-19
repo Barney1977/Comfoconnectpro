@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-  <circle cx="12" cy="12" r="3"/>
-  <path d="M12 2C10 5 8 8 12 9M12 2C14 5 16 8 12 9"/>
-  <path d="M22 12C19 10 16 8 15 12M22 12C19 14 16 16 15 12"/>
-  <path d="M12 22C14 19 16 16 12 15M12 22C10 19 8 16 12 15"/>
-  <path d="M2 12C5 14 8 16 9 12M2 12C5 10 8 8 9 12"/>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="32" cy="32" r="8" />
+  <path d="M32 5.3C26.7 13.3 21.3 21.3 32 24M32 5.3C37.3 13.3 42.7 21.3 32 24" />
+  <path d="M58.7 32C50.7 26.7 42.7 21.3 40 32M58.7 32C50.7 37.3 42.7 42.7 40 32" />
+  <path d="M32 58.7C37.3 50.7 42.7 42.7 32 40M32 58.7C26.7 50.7 21.3 42.7 32 40" />
+  <path d="M5.3 32C13.3 37.3 21.3 42.7 24 32M5.3 32C13.3 26.7 21.3 21.3 24 32" />
 </svg>
