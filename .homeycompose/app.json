@@ -11,9 +11,9 @@
     "en": "Zehnder ComfoConnect Pro",
     "nl": "Zehnder ComfoConnect Pro"
   },
-  "description": {
-    "en": "Control and monitor your Zehnder ventilation unit via Modbus TCP + energy data",
-    "nl": "Bedien en monitor uw Zehnder ventilatieunit via Modbus TCP + energiedata"
+ "description": {
+  "en": "Smart control for your Zehnder ventilation — clean air, your way.",
+  "nl": "Slim beheer van uw Zehnder ventilatie — frisse lucht, op uw manier."
   },
   "category": [
     "climate"
