@@ -1,22 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Fan/ventilation wheel — white paths on transparent background -->
-  <!-- Homey renders this on brandColor (#E3000F) background automatically -->
-  
-  <!-- Outer ring -->
-  <circle cx="50" cy="46" r="30" fill="none" stroke="white" stroke-width="5"/>
-  
-  <!-- Fan blades — 4 blades -->
-  <path d="M50 16 C43 26 43 36 50 40 C57 36 57 26 50 16Z" fill="white"/>
-  <path d="M50 76 C57 66 57 56 50 52 C43 56 43 66 50 76Z" fill="white"/>
-  <path d="M20 46 C30 39 40 39 44 46 C40 53 30 53 20 46Z" fill="white"/>
-  <path d="M80 46 C70 53 60 53 56 46 C60 39 70 39 80 46Z" fill="white"/>
-  
-  <!-- Center hub -->
-  <circle cx="50" cy="46" r="7" fill="white"/>
-  
-  <!-- zehnder text -->
-  <text x="50" y="92" text-anchor="middle" 
-        font-family="Arial,Helvetica,sans-serif" 
-        font-size="11" font-weight="bold" 
-        fill="white" letter-spacing="0.3">zehnder</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1024 1024"
+  fill="none"
+  stroke="#000"
+  stroke-width="48"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+
+  <!-- Buitenbehuizing -->
+  <rect x="140" y="140" width="960" height="960" rx="90"/>
+
+  <!-- Warmtewisselaar (verfijnd kruis met offset) -->
+  <line x1="260" y1="260" x2="764" y2="764"/>
+  <line x1="764" y1="260" x2="260" y2="764"/>
+
+  <!-- Dubbele ventilatoren (links & rechts) -->
+  <circle cx="360" cy="512" r="110"/>
+  <circle cx="664" cy="512" r="110"/>
+
+  <!-- Ventilatorbladen links -->
+  <line x1="360" y1="402" x2="360" y2="462"/>
+  <line x1="360" y1="622" x2="360" y2="562"/>
+  <line x1="250" y1="512" x2="310" y2="512"/>
+  <line x1="470" y1="512" x2="410" y2="512"/>
+
+  <!-- Ventilatorbladen rechts -->
+  <line x1="664" y1="402" x2="664" y2="462"/>
+  <line x1="664" y1="622" x2="664" y2="562"/>
+  <line x1="554" y1="512" x2="614" y2="512"/>
+  <line x1="774" y1="512" x2="714" y2="512"/>
+
+  <!-- Kanaalaansluitingen (verfijnd) -->
+  <line x1="140" y1="512" x2="60" y2="512"/>   <!-- Buitenlucht aanvoer -->
+  <line x1="884" y1="512" x2="964" y2="512"/>  <!-- Buitenlucht afvoer -->
+  <line x1="512" y1="884" x2="512" y2="964"/>  <!-- Toevoer woning -->
+  <line x1="512" y1="140" x2="512" y2="60"/>   <!-- Afzuiging woning -->
+
 </svg>

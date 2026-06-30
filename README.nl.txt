@@ -1,35 +1,7 @@
-Bedien uw Zehnder ComfoConnect Pro ventilatieunit volledig vanuit Homey. Verbind via uw lokale netwerk met Modbus TCP en optioneel het ComfoConnect-energieprotocol.
+Deze app verbindt de Zehnder ComfoConnect Pro gateway met Homey Pro en ondersteunt de Zehnder ComfoAir Q350, Q450 en Q600 WTW-ventilatieunits. Er worden twee onafhankelijke verbindingen gebruikt: Modbus TCP op poort 502 staat altijd actief en zorgt voor een stabiele verbinding voor bediening en sensoren, waarbij meerdere clients gelijktijdig kunnen verbinden. Daarnaast is er optioneel het ComfoConnect binaire protocol op poort 56747, dat energiemeting en ventilatordata levert (vermogen, kWh, luchtdebiet en toerental). Dit protocol staat maar één actieve sessie tegelijk toe en herstelt automatisch zodra de verbinding wordt overgenomen door de ComfoControl-app of de Zehnder Cloud.
 
-Monitor binnen- en buitentemperatuur, luchtvochtigheid, luchtdebiet, ventilatortoerental, filterstatus en energieverbruik. Schakel tussen ventilatiestanden, activeer de afwezigheidsmodus, start een boost tot 24 uur en stel het temperatuurprofiel automatisch of op een vast setpoint in. Met Homey Flows automatiseert u alles: boost bij de deurbel, lagere ventilatie voor het slapengaan of een melding wanneer het filter vervangen moet worden.
+Voor installatie moet de ComfoConnect Pro zijn aangesloten op het LAN of WiFi-netwerk, met Modbus TCP ingeschakeld op het apparaat. Een statisch IP-adres voor de ComfoConnect Pro wordt aanbevolen. Na het installeren van de app voegt u een apparaat toe in Homey en vult u het IP-adres van de ComfoConnect Pro in; poort 502 en unit ID 1 kunnen op de standaardwaarde blijven staan. Optioneel kan energiemonitoring worden ingeschakeld via de apparaatinstellingen, zodat het energiegebruik ook in Homey Energy zichtbaar wordt.
+In de instellingen is het poll-interval aanpasbaar, standaard 30 seconden, dat automatisch oploopt naar 60 seconden zodra een energiesessie actief is om TCP-conflicten te voorkomen. Het inschakelen van energie- en ventilatiemonitoring activeert de optionele verbinding via het ComfoConnect-protocol, nodig voor vermogen, kWh, luchtdebiet, toerental en bypassdata; deze verbinding herstelt zichzelf automatisch na een onderbreking. De gateway UUID wordt normaal automatisch gevonden via UDP-discovery bij de eerste verbinding, en kan handmatig worden ingevoerd als dat niet lukt. Ook is er een instelbare basisvertraging voor het herverbinden van de energiesessie, standaard 15 seconden, die bij herhaalde mislukkingen verdubbelt tot een maximum van 5 minuten.
+Wanneer energiemonitoring actief is, verschijnt het apparaat automatisch in Homey Energy. De cumulatieve energieteller wordt altijd doorgegeven, terwijl kleine schommelingen in vermogen, luchtdebiet en toerental worden gefilterd om onnodige updates in de interface te voorkomen.
 
-Vereisten:
-- Zehnder ComfoConnect Pro aangesloten op uw LAN of WiFi
-- Modbus TCP ingeschakeld op het apparaat (via http://comfoconnectpro.local)
-- Statisch IP-adres aanbevolen
-
-Installatie:
-1. Installeer de app via de Homey App Store.
-2. Voeg een apparaat toe: Apparaten, dan +, dan Zehnder ComfoConnect Pro.
-3. Vul het IP-adres in van uw ComfoConnect Pro.
-4. Laat Poort (502) en Unit ID (1) op standaard staan.
-5. Optioneel: schakel energiemonitoring in via Apparaatinstellingen.
-
-Apparaatinstellingen:
-
-IP-adres: Adres van de ComfoConnect Pro op uw netwerk. Standaard bereikbaar via http://comfoconnectpro.local
-
-Modbus TCP-poort: Standaard: 502. Alleen wijzigen bij aangepaste netwerkconfiguratie.
-
-Modbus Unit ID: Standaard: 1. Niet wijzigen tenzij anders geconfigureerd.
-
-Poll interval (seconden): Hoe vaak Modbus-sensoren worden uitgelezen. Standaard: 30 seconden. Wordt automatisch verhoogd naar 60 seconden bij een actieve energiesessie om TCP-conflicten te voorkomen.
-
-Energie- en ventilatiemonitoring inschakelen: Schakelt de optionele ComfoConnect-protocolverbinding in. Vereist voor vermogen, kWh, m3/h, RPM en bypassdata. Herstelt automatisch bij onderbreking.
-
-Gateway UUID: Wordt automatisch ingevuld bij eerste verbinding via UDP-discovery. Handmatig in te voeren als discovery mislukt.
-
-Basisvertraging herverbinding energie (seconden): Wachttijd na sessieverbreking vóór eerste herstelpoging. Standaard: 15 seconden, verdubbelt per poging tot maximaal 5 minuten.
-
-Homey Energy:
-
-Als energiemonitoring ingeschakeld is, verschijnt het apparaat automatisch in Homey Energy via measure_power voor actueel vermogen in Watt en meter_power voor de cumulatieve energieteller in kWh. De kWh-teller wordt altijd doorgegeven zonder drempelwaarde. Kleine fluctuaties in W, m3/h en RPM worden gefilterd om onnodige UI-updates te voorkomen (drempelwaarden: 2W, 5 m3/h, 50 RPM).
+Een belangrijke beperking is dat de ComfoConnect Pro maximaal één energiesessie gelijktijdig toestaat; gebruik van de ComfoControl-app of de Zehnder Cloud onderbreekt deze sessie tijdelijk, waarna herstel automatisch verloopt. Modbus TCP blijft hier onafhankelijk van werken, zodat bediening en temperatuursensoren altijd beschikbaar blijven. Energiemeting werkt alleen als de gateway UUID bekend is; deze wordt doorgaans automatisch ontdekt, maar kan bij problemen handmatig worden ingevoerd. Vermogensmeting zelf is uitsluitend beschikbaar via het ComfoConnect-protocol, omdat de ComfoConnect Pro hiervoor geen apart register via Modbus heeft.

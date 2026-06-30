@@ -12,8 +12,8 @@
     "nl": "Zehnder ComfoConnect Pro"
   },
  "description": {
-  "en": "Smart control for your Zehnder ventilation — clean air, your way.",
-  "nl": "Slim beheer van uw Zehnder ventilatie — frisse lucht, op uw manier."
+  "en": "Integrate your Zehnder ventilation — clean air, your way.",
+  "nl": "Integreer uw Zehnder ventilatie — frisse lucht, op uw manier."
   },
   "category": [
     "climate"
@@ -28,5 +28,5 @@
     "name": "H. van Barneveld",
     "email": "h.vanbarne@gmail.com"
   },
-  "brandColor": "#00A3E0"
+  "brandColor": "#E31B23"
 }

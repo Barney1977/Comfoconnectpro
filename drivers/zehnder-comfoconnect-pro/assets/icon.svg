@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960" fill="none" fill-opacity="0">
+  <g stroke="#000000" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none">
+
+    <!-- House outline: roof + walls -->
+    <path d="M120 460
+             L480 120
+             L840 460
+             L740 460
+             L740 860
+             L220 860
+             L220 460
+             Z" />
+
+    <!-- Ventilator housing (circle) -->
+    <circle cx="480" cy="610" r="170" />
+
+    <!-- Fan blades (3, rotated) -->
+    <path d="M480 470
+             C 450 470, 430 500, 430 540
+             C 430 570, 455 590, 480 590" />
+
+    <path d="M610 580
+             C 600 545, 565 525, 530 535
+             C 500 545, 485 575, 495 600" />
+
+    <path d="M390 690
+             C 415 715, 455 715, 480 690
+             C 500 670, 500 635, 480 615" />
+
+    <!-- Center hub -->
+    <circle cx="480" cy="610" r="38" />
+
+  </g>
+</svg>
